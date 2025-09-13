@@ -20,6 +20,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: property_management_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"  # Access pgAdmin on localhost:5050
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
   
   # Server or Backend
   server:
@@ -47,3 +61,4 @@ services:
   
 volumes:
   postgres_data:
+  pgadmin_data:

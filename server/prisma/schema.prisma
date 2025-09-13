@@ -1,8 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// npx prisma generate -- to generate client
+// npx prisma migrate dev --name init -- to create migration and db
+// or docker-compose -f docker-compose.dev.yml exec server npx prisma migrate dev --name init
 
 generator client {
   provider = "prisma-client-js"
@@ -13,3 +13,699 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ========== CORE ENTITIES ==========
+
+model Company {
+  id String @id @default(uuid())
+  name String
+  address String?
+  phone String?
+  email String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  properties Property[]
+  superAdmins SuperAdmin[]
+  
+  @@map("companies")
+}
+
+model SuperAdmin {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String 
+  phone String?
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  companyId String
+  company Company @relation(fields: [companyId], references: [id])
+  
+  // Relations
+  managedProperties Property[]
+  
+  @@map("super_admins")
+}
+
+model Property {
+  id String @id @default(uuid())
+  name String
+  address String
+  totalUnits Int
+  description String?
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  companyId String
+  company Company @relation(fields: [companyId], references: [id])
+  
+  superAdminId String?
+  superAdmin SuperAdmin? @relation(fields: [superAdminId], references: [id])
+  
+  // Relations
+  managers PropertyManager[]
+  tenants Tenant[]
+  units Unit[]
+  tickets Ticket[]
+  maintenanceSchedules MaintenanceSchedule[]
+  financialReports FinancialReport[]
+  qrLogs QRLog[]
+  notices Notice[]
+  
+  @@map("properties")
+}
+
+model Unit {
+  id String @id @default(uuid())
+  unitNumber String
+  floor Int?
+  bedrooms Int?
+  bedCount Int?
+  bedType BedType? @default(SINGLE)
+  bathrooms Int?
+  area Float? // Square meters
+  baseRent Float
+  status UnitStatus @default(VACANT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  // Relations
+  tenant Tenant?
+  billings Billing[]
+  
+  @@unique([propertyId, unitNumber])
+  @@map("units")
+}
+
+// ========== USER MANAGEMENT ==========
+
+model PropertyManager {
+  id String @id @default(uuid())
+  name String
+  email String? @unique
+  password String 
+  phone String?
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  // Relations -> Property Manager is the foreign key
+  departmentHeads DepartmentHead[]
+  budgetRequests BudgetRequest[]
+  maintenanceSchedules MaintenanceSchedule[]
+  
+  @@map("property_managers")
+}
+
+// e.g Electrical, Plumbing, Housekeeping, Security, Finance, IT
+model DepartmentHead {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String 
+  phone String?
+  department Department
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  managerId String
+  manager PropertyManager @relation(fields: [managerId], references: [id])
+  
+  // Relations -> Becomes foreign key in other tables
+  staff MaintenanceStaff[]
+  tickets Ticket[]
+  jobLogs JobCompletionLog[]
+  inventoryUsage InventoryUsage[]
+  budgetRequests BudgetRequest[]
+  
+  @@map("department_heads")
+}
+
+model Tenant {
+  id String @id @default(uuid())
+  name String
+  email String? @unique
+  username String @unique
+  password String 
+  phone String?
+  emergencyContact String?
+  moveInDate DateTime?
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  unitId String @unique
+  unit Unit @relation(fields: [unitId], references: [id])
+  
+  // Relations
+  tickets Ticket[]
+  payments Payment[]
+  billings Billing[]
+  qrCodes TenantQRCode[]
+  visitorQRCodes VisitorQRCode[]
+  
+  @@map("tenants")
+  TicketUpvote TicketUpvote[]
+}
+
+// ========== TICKET SYSTEM ==========
+
+model Ticket {
+  id String @id @default(uuid())
+  title String
+  description String
+  isPrivate Boolean @default(true)
+  status TicketStatus @default(OPEN)
+  priority TicketPriority @default(MEDIUM)
+  tags String[] // Array of tags/flairs
+  upvotes Int @default(0)
+  autoCloseDate DateTime // 30 days from creation if resolved
+  resolvedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  tenantId String
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  assignedDepartmentId String?
+  assignedDepartment DepartmentHead? @relation(fields: [assignedDepartmentId], references: [id])
+
+  
+  // Relations
+  MaintenanceTask MaintenanceTask[] // One ticket can be linked to multiple task leading to multiple staff
+  comments TicketComment[]
+  upvotedBy TicketUpvote[]
+  
+  @@map("tickets")
+}
+
+model TicketComment {
+  id String @id @default(uuid())
+  content String
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  ticketId String
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  authorId String
+  authorType UserType // TENANT, DEPARTMENT_HEAD, PROPERTY_MANAGER
+  
+  @@map("ticket_comments")
+}
+
+model TicketUpvote {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  ticketId String
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  tenantId String // Id of the tenant who upvoted
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  
+  @@unique([ticketId, tenantId])
+  @@map("ticket_upvotes")
+}
+
+// ========== MAINTENANCE SYSTEM ==========
+// Maintenace Staff resolving schedules task and tickets
+
+model MaintenanceSchedule {
+  id String @id @default(uuid())
+  title String
+  description String?
+  scheduleType ScheduleType // DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY
+  frequency Int @default(1) // Every X days/weeks/months
+  nextDue DateTime
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  propertyId String // Unit to be maintained
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  createdById String
+  createdBy PropertyManager @relation(fields: [createdById], references: [id])
+  
+  // Relations
+  tasks MaintenanceTask[]
+  
+  @@map("maintenance_schedules")
+}
+
+model MaintenanceTask {
+  id String @id @default(uuid())
+  description String
+  scheduledDate DateTime
+  completedDate DateTime?
+  status TaskStatus @default(PENDING)
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  scheduleId String
+  schedule MaintenanceSchedule @relation(fields: [scheduleId], references: [id])
+  
+  assignedStaffId String?
+  assignedStaff MaintenanceStaff? @relation(fields: [assignedStaffId], references: [id])
+  
+  ticketId String?
+  ticket Ticket? @relation(fields: [ticketId], references: [id])
+  // Relations
+  jobLogs JobCompletionLog[]
+  
+  @@map("maintenance_tasks")
+}
+
+model MaintenanceStaff {
+  id String @id @default(uuid())
+  name String
+  email String? @unique
+  phone String?
+  role StaffRole
+  isActive Boolean @default(true)
+  overallRating Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  departmentHeadId String
+  departmentHead DepartmentHead @relation(fields: [departmentHeadId], references: [id])
+
+  // Relations
+  tasks MaintenanceTask[]
+  jobLogs JobCompletionLog[]
+  reviews StaffReview[]
+  
+  @@map("maintenance_staff")
+}
+
+model JobCompletionLog {
+  id String @id @default(uuid())
+  description String
+  timeSpent Float? // Hours
+  materialsUsed String?
+  completedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  taskId String
+  task MaintenanceTask @relation(fields: [taskId], references: [id])
+  
+  staffId String
+  staff MaintenanceStaff @relation(fields: [staffId], references: [id])
+  
+  departmentHeadId String
+  departmentHead DepartmentHead @relation(fields: [departmentHeadId], references: [id])
+  
+  @@map("job_completion_logs")
+}
+
+model StaffReview {
+  id String @id @default(uuid())
+  rating Int // 1-5
+  comment String?
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  staffId String
+  staff MaintenanceStaff @relation(fields: [staffId], references: [id])
+  
+  @@map("staff_reviews")
+}
+
+// ========== FINANCIAL SYSTEM ==========
+
+model Billing {
+  id String @id @default(uuid())
+  billingPeriod String // "2024-09"
+  baseRent Float
+  waterBill Float @default(0)
+  electricityBill Float @default(0)
+  otherCharges Float @default(0)
+  totalAmount Float
+  dueDate DateTime
+  status BillingStatus @default(PENDING)
+  generatedAt DateTime @default(now())
+  paidAt DateTime?
+  
+  // Foreign Keys
+  tenantId String
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  
+  unitId String
+  unit Unit @relation(fields: [unitId], references: [id])
+  
+  // Relations
+  payments Payment[]
+  
+  @@unique([tenantId, billingPeriod])
+  @@map("billings")
+}
+
+model Payment {
+  id String @id @default(uuid())
+  amount Float
+  paymentMethod PaymentMethod @default(CASH)
+  referenceNumber String?
+  notes String?
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  tenantId String
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  
+  billingId String?
+  billing Billing? @relation(fields: [billingId], references: [id])
+  
+  @@map("payments")
+}
+
+model BudgetRequest {
+  id String @id @default(uuid())
+  amount Float
+  purpose String
+  description String?
+  department Department
+  status RequestStatus @default(PENDING)
+  requestedAt DateTime @default(now())
+  reviewedAt DateTime?
+  
+  // Foreign Keys - Can be requested by either Department Head or Property Manager
+  departmentHeadId String?
+  departmentHead DepartmentHead? @relation(fields: [departmentHeadId], references: [id])
+  
+  propertyManagerId String?
+  propertyManager PropertyManager? @relation(fields: [propertyManagerId], references: [id])
+  
+  @@map("budget_requests")
+}
+
+model FinancialReport {
+  id String @id @default(uuid())
+  month Int
+  year Int
+  totalIncome Float @default(0)
+  totalExpenses Float @default(0)
+  netProfit Float @default(0)
+  collectionsReceived Float @default(0)
+  delinquentUnits Int @default(0)
+  generatedAt DateTime @default(now())
+  
+  // Foreign Keys
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  @@unique([propertyId, month, year])
+  @@map("financial_reports")
+}
+
+// ========== INVENTORY SYSTEM ==========
+
+model InventoryItem {
+  id String @id @default(uuid())
+  name String
+  description String?
+  category String
+  unit String // pieces, liters, kg, etc
+  currentStock Int @default(0)
+  minimumStock Int @default(0)
+  costPerUnit Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  usage InventoryUsage[]
+  
+  @@map("inventory_items")
+}
+
+model InventoryUsage {
+  id String @id @default(uuid())
+  quantity Int
+  purpose String
+  usedAt DateTime @default(now())
+  
+  // Foreign Keys
+  itemId String
+  item InventoryItem @relation(fields: [itemId], references: [id])
+  
+  departmentHeadId String
+  departmentHead DepartmentHead @relation(fields: [departmentHeadId], references: [id])
+  
+  @@map("inventory_usage")
+}
+
+// ========== QR CODE SYSTEM ==========
+// For access control and visitor management
+model TenantQRCode {
+  id String @id @default(uuid())
+  qrCode String @unique
+  isActive Boolean @default(true)
+  expiresAt DateTime?
+  generatedAt DateTime @default(now())
+  
+  // Foreign Keys
+  tenantId String
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  
+  // Relations
+  logs QRLog[]
+  
+  @@map("tenant_qr_codes")
+}
+
+model VisitorQRCode {
+  id String @id @default(uuid())
+  qrCode String @unique
+  visitorName String
+  purpose String
+  validFrom DateTime
+  validUntil DateTime
+  isUsed Boolean @default(false)
+  generatedAt DateTime @default(now())
+  
+  // Foreign Keys
+  tenantId String
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  
+  // Relations
+  logs QRLog[]
+  
+  @@map("visitor_qr_codes")
+}
+
+model QRLog {
+  id String @id @default(uuid())
+  qrType QRType
+  action QRAction // ENTRY, EXIT
+  timestamp DateTime @default(now())
+  
+  // Foreign Keys
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  tenantQRCodeId String?
+  tenantQRCode TenantQRCode? @relation(fields: [tenantQRCodeId], references: [id])
+  
+  visitorQRCodeId String?
+  visitorQRCode VisitorQRCode? @relation(fields: [visitorQRCodeId], references: [id])
+  
+  @@map("qr_logs")
+}
+
+model Blacklisted {
+  id String @id @default(uuid())
+  visitorName String
+}
+
+
+// ========== NOTICE SYSTEM ==========
+
+model Notice {
+  id String @id @default(uuid())
+  title String
+  content String
+  priority NoticePriority @default(LOW)
+  isActive Boolean @default(true)
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  propertyId String
+  property Property @relation(fields: [propertyId], references: [id])
+  
+  @@map("notices") // Actual db table name
+}
+
+// ========== SECURITY INCIDENTS ==========
+
+model SecurityIncident {
+  id String @id @default(uuid())
+  title String
+  description String
+  incidentType IncidentType
+  severity IncidentSeverity @default(LOW)
+  reportedAt DateTime @default(now())
+  resolvedAt DateTime?
+  
+  @@map("security_incidents")
+}
+
+// ========== ENUMS ==========
+
+enum Department {
+  ELECTRICAL
+  PLUMBING
+  HOUSEKEEPING
+  SECURITY
+  FINANCE
+  IT
+}
+
+enum UserType {
+  TENANT
+  DEPARTMENT_HEAD
+  PROPERTY_MANAGER
+  SUPER_ADMIN
+}
+
+enum UnitStatus {
+  OCCUPIED
+  VACANT
+  MAINTENANCE
+  RESERVED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ScheduleType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum StaffRole {
+  PLUMBER
+  ELECTRICIAN
+  CLEANER
+  SECURITY_GUARD
+  IT_TECHNICIAN
+  GENERAL_MAINTENANCE
+}
+
+enum BillingStatus {
+  PENDING
+  PAID
+  OVERDUE
+  PARTIAL
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CREDIT_CARD
+  GCASH
+  PAYMAYA
+  CHECK
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum QRType {
+  TENANT
+  VISITOR
+}
+
+enum QRAction {
+  ENTRY
+  EXIT
+}
+
+enum NoticePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum IncidentType {
+  THEFT
+  FIGHT
+  VANDALISM
+  NOISE_COMPLAINT
+  TRESPASSING
+  FIRE
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum BedType {
+  SINGLE
+  DOUBLE
+  QUEEN
+  KING
+  TWIN
+}
+
+// 26 Tables
