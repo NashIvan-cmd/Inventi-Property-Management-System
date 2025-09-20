@@ -23,7 +23,11 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "allowUnreachableCode": false,
-    "allowUnusedLabels": false
+    "allowUnusedLabels": false,
+    "baseUrl": "./src",           // 👈 base directory for non-relative imports
+    "paths": {
+      "@/*": ["*"]                // 👈 allows you to do import ... from "@/..."
+    }
   },
   "include": [
     "src/**/*"
