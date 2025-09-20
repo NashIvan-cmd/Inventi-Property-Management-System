@@ -35,6 +35,15 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
   
+  redis:
+    image: redis:7.2-alpine
+    container_name: property_management_redis
+    ports:
+      - "6379:6379"  # Optional in development; hide in production behind your backend
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--save", "", "--appendonly", "yes"]
+
   # Server or Backend
   server:
     build: ./server
@@ -62,3 +71,4 @@ services:
 volumes:
   postgres_data:
   pgadmin_data:
+  redis_data:
