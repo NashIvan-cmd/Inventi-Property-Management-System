@@ -16,41 +16,26 @@ datasource db {
 
 // ========== CORE ENTITIES ==========
 
-model Company {
+model Admin {
   id String @id @default(uuid())
-  name String
+  username String? @unique
+  name String?
+  password String
+  mustChangePassword Boolean @default(true)
   address String?
-  phone String?
-  email String?
+  email String @unique
+  role AdminRole @default(PROPERTY_MANAGER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  // Relations
-  properties Property[]
-  superAdmins SuperAdmin[]
-  
-  @@map("companies")
+  disable Boolean @default(false)
+
+  DeparmentHead DepartmentHead[]
+  managedProperties Property[]
+  budgetRequests BudgetRequest[]
+
+  @@map("admin")
 }
 
-model SuperAdmin {
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  password String 
-  phone String?
-  isActive Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Foreign Keys
-  companyId String
-  company Company @relation(fields: [companyId], references: [id])
-  
-  // Relations
-  managedProperties Property[]
-  
-  @@map("super_admins")
-}
 
 model Property {
   id String @id @default(uuid())
@@ -61,16 +46,13 @@ model Property {
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  disabled Boolean @default(false)
   
   // Foreign Keys
-  companyId String
-  company Company @relation(fields: [companyId], references: [id])
-  
-  superAdminId String?
-  superAdmin SuperAdmin? @relation(fields: [superAdminId], references: [id])
+  adminId String
+  admin Admin @relation(fields: [adminId], references: [id])
   
   // Relations
-  managers PropertyManager[]
   tenants Tenant[]
   units Unit[]
   tickets Ticket[]
@@ -95,11 +77,13 @@ model Unit {
   status UnitStatus @default(VACANT)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  disabled Boolean @default(false)
   
   // Foreign Keys
   propertyId String
   property Property @relation(fields: [propertyId], references: [id])
-  
+  // property is useful when you want to include the whole Property model details
+
   // Relations
   tenant Tenant?
   billings Billing[]
@@ -110,43 +94,25 @@ model Unit {
 
 // ========== USER MANAGEMENT ==========
 
-model PropertyManager {
-  id String @id @default(uuid())
-  name String
-  email String? @unique
-  password String 
-  phone String?
-  isActive Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Foreign Keys
-  propertyId String
-  property Property @relation(fields: [propertyId], references: [id])
-  
-  // Relations -> Property Manager is the foreign key
-  departmentHeads DepartmentHead[]
-  budgetRequests BudgetRequest[]
-  maintenanceSchedules MaintenanceSchedule[]
-  
-  @@map("property_managers")
-}
 
 // e.g Electrical, Plumbing, Housekeeping, Security, Finance, IT
 model DepartmentHead {
   id String @id @default(uuid())
-  name String
+  name String?
   email String @unique
-  password String 
+  username String? @unique
+  password String
+  mustChangePassword Boolean @default(true)
   phone String?
   department Department
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  disabled Boolean @default(false)
   
   // Foreign Keys
-  managerId String
-  manager PropertyManager @relation(fields: [managerId], references: [id])
+  adminId String
+  admin Admin @relation(fields: [adminId], references: [id])
   
   // Relations -> Becomes foreign key in other tables
   staff MaintenanceStaff[]
@@ -160,7 +126,7 @@ model DepartmentHead {
 
 model Tenant {
   id String @id @default(uuid())
-  name String
+  name String?
   email String? @unique
   username String @unique
   password String 
@@ -170,6 +136,7 @@ model Tenant {
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  disabled Boolean @default(false)
   
   // Foreign Keys
   propertyId String
@@ -187,6 +154,33 @@ model Tenant {
   
   @@map("tenants")
   TicketUpvote TicketUpvote[]
+}
+
+model MaintenanceStaff {
+  id String @id @default(uuid())
+  name String?
+  username String @unique
+  password String @default("12345678")
+  mustChangePassword Boolean @default(true)
+  email String? @unique
+  phone String?
+  role StaffRole
+  isActive Boolean @default(true)
+  overallRating Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  disabled Boolean @default(true)
+  
+  // Foreign Keys
+  departmentHeadId String
+  departmentHead DepartmentHead @relation(fields: [departmentHeadId], references: [id])
+
+  // Relations
+  tasks MaintenanceTask[]
+  jobLogs JobCompletionLog[]
+  reviews StaffReview[]
+  
+  @@map("maintenance_staff")
 }
 
 // ========== TICKET SYSTEM ==========
@@ -273,7 +267,6 @@ model MaintenanceSchedule {
   property Property @relation(fields: [propertyId], references: [id])
   
   createdById String
-  createdBy PropertyManager @relation(fields: [createdById], references: [id])
   
   // Relations
   tasks MaintenanceTask[]
@@ -304,29 +297,6 @@ model MaintenanceTask {
   jobLogs JobCompletionLog[]
   
   @@map("maintenance_tasks")
-}
-
-model MaintenanceStaff {
-  id String @id @default(uuid())
-  name String
-  email String? @unique
-  phone String?
-  role StaffRole
-  isActive Boolean @default(true)
-  overallRating Float @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Foreign Keys
-  departmentHeadId String
-  departmentHead DepartmentHead @relation(fields: [departmentHeadId], references: [id])
-
-  // Relations
-  tasks MaintenanceTask[]
-  jobLogs JobCompletionLog[]
-  reviews StaffReview[]
-  
-  @@map("maintenance_staff")
 }
 
 model JobCompletionLog {
@@ -423,9 +393,8 @@ model BudgetRequest {
   // Foreign Keys - Can be requested by either Department Head or Property Manager
   departmentHeadId String?
   departmentHead DepartmentHead? @relation(fields: [departmentHeadId], references: [id])
-  
-  propertyManagerId String?
-  propertyManager PropertyManager? @relation(fields: [propertyManagerId], references: [id])
+  adminId String?
+  admin Admin? @relation(fields: [adminId], references: [id])
   
   @@map("budget_requests")
 }
@@ -633,6 +602,11 @@ enum TaskStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  PROPERTY_MANAGER
 }
 
 enum StaffRole {
