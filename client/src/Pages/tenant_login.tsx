@@ -1,9 +1,22 @@
-// ALL USERS
+// TENANTS ONLY
 
 function LoginPage() {
     return (
-      <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
-        <div className="card p-4 shadow" style={{ width: "400px" }}>
+      <div>
+      <nav className="navbar navbar-expand-lg navbar-light py-4" style={{ backgroundColor: "#e3f2fd" }}>
+          <div className="container-fluid">
+            <a className="navbar-brand" href="#">FIT PMS</a>
+            <div className="collapse navbar-collapse">
+              <ul className="navbar-nav ms-auto">
+                <li className="nav-item"><a className="nav-link" href="#">Overview</a></li>
+                <li className="nav-item"><a className="nav-link" href="#">Tenants</a></li>
+                <li className="nav-item"><a className="nav-link" href="#">Staff</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      <div className="container-fluid d-flex justify-content-center align-items-center bg-light" style = {{minHeight: "80vh"}}>
+        <div className="card p-4 shadow" style={{ width: "400px"}}>
           <h3 className="text-center mb-3">Login</h3>
           <form>
             <div className="mb-3">
@@ -39,13 +52,10 @@ function LoginPage() {
             <button type="submit" className="btn btn-primary w-100 mb-2">
               Login
             </button>
-  
-            {/* Sign Up Button */}
-            <button type="button" className="btn btn-outline-secondary w-100">
-              Sign Up
-            </button>
+
           </form>
         </div>
+      </div>
       </div>
     );
   }
