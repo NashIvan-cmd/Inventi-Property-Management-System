@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Card, Button, Row, Col } from "react-bootstrap";
+import TenantSidebar from "../Components/tenant_sidebar";
 
 const MarketplacePage: React.FC = () => {
   const items = [
@@ -11,25 +12,42 @@ const MarketplacePage: React.FC = () => {
   ];
 
   return (
-    <div className="container mt-4">
-      <h2>Community Marketplace</h2>
-      <p className="text-muted">Buy, sell, or trade within the community.</p>
+  <div className = "d-flex">
+    <TenantSidebar/>
+    <div className = "flex-grow-1">
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
+        <a className="navbar-brand fw-bold" href="#">
+        Community Marketplace
+        </a>
+        <div className="ms-auto d-flex align-items-center">
+          <button className="btn btn-light btn-sm me-2">🔔 Notifications</button>
+          <button className="btn btn-outline-light btn-sm">Logout</button>
+        </div>
+      </nav>
+      <div className="container mt-4">
 
-      <Row>
-        {items.map((item) => (
-          <Col key={item.id} md={4} className="mb-4">
-            <Card>
-              <Card.Body>
-                <Card.Title>{item.title}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{item.seller}</Card.Subtitle>
-                <Card.Text><strong>{item.price}</strong></Card.Text>
-                <Button variant="primary" size="sm">Contact Seller</Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+
+        <p className="text-muted">Buy, sell, or trade within the community.</p>
+
+        <Row>
+          {items.map((item) => (
+            <Col key={item.id} md={4} className="mb-4">
+              <Card>
+                <Card.Body>
+                  <Card.Title>{item.title}</Card.Title>
+                  <Card.Subtitle className="mb-2 text-muted">{item.seller}</Card.Subtitle>
+                  <Card.Text><strong>{item.price}</strong></Card.Text>
+                  <Button variant="primary" size="sm">Contact Seller</Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
     </div>
+  </div>
+
   );
 };
 

@@ -44,7 +44,6 @@ const RegisterTenant: React.FC = () => {
 
   return (
     <div className="container mt-5">
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">navbar</nav>
       <h1 className="mb-4">Register Tenant</h1>
       <div className="card shadow-sm">
         <div className="card-body">

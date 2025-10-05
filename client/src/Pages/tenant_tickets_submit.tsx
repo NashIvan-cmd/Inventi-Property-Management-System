@@ -12,7 +12,7 @@ interface Ticket {
   status: "open" | "resolved" | "closed";
 }
 
-const TenantTickets: React.FC = () => {
+const SubmitTicket: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -164,4 +164,4 @@ const TenantTickets: React.FC = () => {
   );
 };
 
-export default TenantTickets;
+export default SubmitTicket;
