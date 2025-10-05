@@ -1,48 +1,19 @@
 //TENANTS ONLY
 
+import TenantSidebar from "../Components/tenant_sidebar";
+
 function TenantDashboard() {
     return (
       <div className="d-flex">
         {/* Sidebar */}
-        <div className="bg-light border-end vh-100" style={{ width: "220px" }}>
-          <div className="p-3">
-            <h5 className="fw-bold mb-4">Tenant Portal</h5>
-            <ul className="nav flex-column">
-              <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-dark">
-                  📢 Noticeboard
-                </a>
-              </li>
-              <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-dark">
-                  📝 Tickets
-                </a>
-              </li>
-              <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-dark">
-                  💳 Billings
-                </a>
-              </li>
-              <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-dark">
-                  🎫 Visitor QR
-                </a>
-              </li>
-              <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-dark">
-                  🏷 Marketplace
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-  
+        <TenantSidebar/>
+        
         {/* Main Content */}
         <div className="flex-grow-1">
           {/* Navbar */}
           <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
             <a className="navbar-brand fw-bold" href="#">
-              FIT PMS
+              HOME
             </a>
             <div className="ms-auto d-flex align-items-center">
               <button className="btn btn-light btn-sm me-2">🔔 Notifications</button>

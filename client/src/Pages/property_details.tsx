@@ -5,6 +5,8 @@ import React, { useState } from "react";
 
 const PropertyDetails: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"tenants" | "departments" | "property_manager">(
+    
+    //set active tab to property manager by default
     "property_manager"
   );
 
@@ -15,6 +17,7 @@ const PropertyDetails: React.FC = () => {
     assignmentDate: "2025-09-27",
     address: "somewhere over the rainbow, Pasig city",
   }
+
   // Mock property info
   const property = {
     name: "GreenView Condominiums",
@@ -23,7 +26,6 @@ const PropertyDetails: React.FC = () => {
     manager: propertyManager.name,
     units: 50,
   };
-
 
   // Mock tenants
   const tenants = [

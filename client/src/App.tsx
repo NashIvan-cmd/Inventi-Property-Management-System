@@ -21,7 +21,7 @@ function App() {
       //<RegisterTenant/>
       //<RegisterDepartmentHead/>
       //<PropertyDetails/>
-      //<TenantDashboard/>
+      <TenantDashboard/>
       //<TenantTickets/>
       //<TenantBillings/>
       //<MarketplacePage/>

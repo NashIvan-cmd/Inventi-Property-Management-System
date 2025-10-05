@@ -1,6 +1,7 @@
 // COMPANY ADMIN ONLY
 
 import React from "react";
+import CompanyAdminNavBar from "../Components/company_admin_navbar.tsx";
 
 const PropertiesOverview: React.FC = () => {
   const properties = [
@@ -22,16 +23,11 @@ const PropertiesOverview: React.FC = () => {
   ];
 
   return (
-    <div className="d-flex">
-      {/* Sidebar */}
-      <div className="bg-light border-end p-3" style={{ width: "200px" }}>
-        <h6 className="fw-bold">PROPERTIES OVERVIEW</h6>
-      </div>
-
+    <div>
       {/* Main Content */}
+      <CompanyAdminNavBar/>
       <div className="flex-grow-1 p-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className="fw-bold">PROPERTIES OVERVIEW</h4>
           <button className="btn btn-success">Add Property</button>
         </div>
 
@@ -49,7 +45,8 @@ const PropertiesOverview: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-            {/* map returns an array of <td> elements */}
+            {/* map iterates over the properties array and return a <tr> for each object,
+                with <td> cells for each property field */}
               {properties.map((p, index) => ( 
                 <tr key={index}>
                   <td>{p.name}</td>

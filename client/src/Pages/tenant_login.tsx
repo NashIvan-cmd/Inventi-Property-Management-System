@@ -1,20 +1,10 @@
 // TENANTS ONLY
+import MainNavBar from '../Components/main_navbar.tsx'
 
 function LoginPage() {
     return (
-      <div>
-      <nav className="navbar navbar-expand-lg navbar-light py-4" style={{ backgroundColor: "#e3f2fd" }}>
-          <div className="container-fluid">
-            <a className="navbar-brand" href="#">FIT PMS</a>
-            <div className="collapse navbar-collapse">
-              <ul className="navbar-nav ms-auto">
-                <li className="nav-item"><a className="nav-link" href="#">Overview</a></li>
-                <li className="nav-item"><a className="nav-link" href="#">Tenants</a></li>
-                <li className="nav-item"><a className="nav-link" href="#">Staff</a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
+    <div>
+      <MainNavBar/>
       <div className="container-fluid d-flex justify-content-center align-items-center bg-light" style = {{minHeight: "80vh"}}>
         <div className="card p-4 shadow" style={{ width: "400px"}}>
           <h3 className="text-center mb-3">Login</h3>
@@ -49,14 +39,14 @@ function LoginPage() {
             </div>
   
             {/* Login Button */}
-            <button type="submit" className="btn btn-primary w-100 mb-2">
+            <button type="submit" className="btn btn-primary w-100 mb-2 dark-blue-btn">
               Login
             </button>
 
           </form>
         </div>
       </div>
-      </div>
+    </div>
     );
   }
   
