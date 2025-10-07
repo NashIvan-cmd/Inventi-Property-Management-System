@@ -11,6 +11,7 @@ import TenantBillings from './Pages/tenant_billings.tsx'
 import MarketplacePage from './Pages/marketplace_page.tsx'
 import AmenitiesPage from './Pages/amenities_page.tsx'
 import TenantProfilePage from './Pages/tenant_profile.tsx'
+import TenantTicketsPage from './Pages/tenant-tickets-page.tsx'
 
 function App() {
 
@@ -22,12 +23,13 @@ function App() {
       //<RegisterTenant/>
       //<RegisterDepartmentHead/>
       //<PropertyDetails/>
-      <TenantDashboard/>
+      //<TenantDashboard/>
       //<SubmitTicket/>
       //<TenantBillings/>
       //<MarketplacePage/>
-      //<AmenitiesPage/>
+      <AmenitiesPage/>
       //<TenantProfilePage/>
+      //<TenantTicketsPage/>
       
   );
 }

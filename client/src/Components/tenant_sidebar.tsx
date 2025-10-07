@@ -39,7 +39,7 @@ function TenantSidebar(){
               </li>
               <li className="nav-item mb-2">
                 <a href="#" className="nav-link text-dark">
-                  🏀 Reserve Amenities
+                  🏀 Amenities
                 </a>
               </li>
             </ul>
