@@ -81,16 +81,25 @@ const SubmitTicket: React.FC = () => {
 
             <div className="mb-3">
               <label className="form-label">Tag/Category</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="e.g. Plumbing, Security, Electrical"
+              <div className="dropdown">
+               
+              </div>
+                <select
+                className="form-select"
                 value={formData.tag}
                 onChange={(e) =>
                   setFormData({ ...formData, tag: e.target.value })
                 }
-              />
+              >
+                <option value="">Select a department...</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Security">Security</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Housekeeping">Housekeeping</option>
+              </select>
+
             </div>
+
 
             <div className="mb-3">
               <label className="form-label">Visibility</label>

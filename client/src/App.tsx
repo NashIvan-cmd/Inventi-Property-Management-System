@@ -24,10 +24,10 @@ function App() {
       //<RegisterDepartmentHead/>
       //<PropertyDetails/>
       //<TenantDashboard/>
-      //<SubmitTicket/>
+      <SubmitTicket/>
       //<TenantBillings/>
       //<MarketplacePage/>
-      <AmenitiesPage/>
+      //<AmenitiesPage/>
       //<TenantProfilePage/>
       //<TenantTicketsPage/>
       
