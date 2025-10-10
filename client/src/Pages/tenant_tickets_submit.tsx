@@ -1,6 +1,8 @@
 // tenants only
 
 import React, { useState, type FormEvent } from "react";
+import TenantSidebar from "../Components/tenant_sidebar";
+import TenantNavbar from "../Components/tenant_navbar";
 
 interface Ticket {
   id: number;
@@ -45,131 +47,143 @@ const SubmitTicket: React.FC = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4">Tenant Tickets</h1>
 
-      {/* Ticket Form */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-body">
-          <h4 className="card-title mb-3">Submit a Ticket</h4>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="form-label">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                required
-              />
+    <div className="d-flex">
+        <TenantSidebar/>
+      <div className="flex-grow-1">
+          {/* Navbar */}
+          <TenantNavbar page = "TICKETS"/>
+        <div className="container mt-5">
+          <h1 className="mb-4">Tenant Tickets</h1>
+
+
+
+          {/* Ticket Form */}
+          <div className="card shadow-sm mb-4">
+            <div className="card-body">
+              <h4 className="card-title mb-3">Submit a Ticket</h4>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Title</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    className="form-control"
+                    rows={3}
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Tag/Category</label>
+                  <div className="dropdown">
+                  
+                  </div>
+                    <select
+                    className="form-select"
+                    value={formData.tag}
+                    onChange={(e) =>
+                      setFormData({ ...formData, tag: e.target.value })
+                    }
+                  >
+                    <option value="">Select a department...</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Security">Security</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Housekeeping">Housekeeping</option>
+                  </select>
+
+                </div>
+
+
+                <div className="mb-3">
+                  <label className="form-label">Visibility</label>
+                  <select
+                    className="form-select"
+                    value={formData.visibility}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        visibility: e.target.value as "public" | "private",
+                      })
+                    }
+                  >
+                    <option value="public">Public (visible to other tenants)</option>
+                    <option value="private">
+                      Private (visible only to you & staff)
+                    </option>
+                  </select>
+                </div>
+
+                <button type="submit" className="btn btn-primary w-100">
+                  Submit Ticket
+                </button>
+              </form>
             </div>
+          </div>
 
-            <div className="mb-3">
-              <label className="form-label">Description</label>
-              <textarea
-                className="form-control"
-                rows={3}
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                required
-              />
+          {/* Tickets List */}
+          <h3>Existing Tickets</h3>
+          {tickets.length === 0 ? (
+            <p className="text-muted">No tickets submitted yet.</p>
+          ) : (
+            <div className="list-group">
+              {tickets.map((ticket) => (
+                <div
+                  key={ticket.id}
+                  className="list-group-item list-group-item-action mb-2 shadow-sm"
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="mb-1">{ticket.title}</h5>
+                    <span
+                      className={`badge ${
+                        ticket.visibility === "public"
+                          ? "bg-success"
+                          : "bg-secondary"
+                      }`}
+                    >
+                      {ticket.visibility}
+                    </span>
+                  </div>
+                  <p className="mb-1">{ticket.description}</p>
+                  <small className="text-muted">Tag: {ticket.tag}</small>
+                  <div className="d-flex justify-content-between align-items-center mt-2">
+                    <span className="badge bg-info text-dark">
+                      Status: {ticket.status}
+                    </span>
+                    {ticket.visibility === "public" && (
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => handleUpvote(ticket.id)}
+                      >
+                        👍 Upvote ({ticket.upvotes})
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-
-            <div className="mb-3">
-              <label className="form-label">Tag/Category</label>
-              <div className="dropdown">
-               
-              </div>
-                <select
-                className="form-select"
-                value={formData.tag}
-                onChange={(e) =>
-                  setFormData({ ...formData, tag: e.target.value })
-                }
-              >
-                <option value="">Select a department...</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Security">Security</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Housekeeping">Housekeeping</option>
-              </select>
-
-            </div>
-
-
-            <div className="mb-3">
-              <label className="form-label">Visibility</label>
-              <select
-                className="form-select"
-                value={formData.visibility}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    visibility: e.target.value as "public" | "private",
-                  })
-                }
-              >
-                <option value="public">Public (visible to other tenants)</option>
-                <option value="private">
-                  Private (visible only to you & staff)
-                </option>
-              </select>
-            </div>
-
-            <button type="submit" className="btn btn-primary w-100">
-              Submit Ticket
-            </button>
-          </form>
+          )}
         </div>
       </div>
 
-      {/* Tickets List */}
-      <h3>Existing Tickets</h3>
-      {tickets.length === 0 ? (
-        <p className="text-muted">No tickets submitted yet.</p>
-      ) : (
-        <div className="list-group">
-          {tickets.map((ticket) => (
-            <div
-              key={ticket.id}
-              className="list-group-item list-group-item-action mb-2 shadow-sm"
-            >
-              <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-1">{ticket.title}</h5>
-                <span
-                  className={`badge ${
-                    ticket.visibility === "public"
-                      ? "bg-success"
-                      : "bg-secondary"
-                  }`}
-                >
-                  {ticket.visibility}
-                </span>
-              </div>
-              <p className="mb-1">{ticket.description}</p>
-              <small className="text-muted">Tag: {ticket.tag}</small>
-              <div className="d-flex justify-content-between align-items-center mt-2">
-                <span className="badge bg-info text-dark">
-                  Status: {ticket.status}
-                </span>
-                {ticket.visibility === "public" && (
-                  <button
-                    className="btn btn-sm btn-outline-primary"
-                    onClick={() => handleUpvote(ticket.id)}
-                  >
-                    👍 Upvote ({ticket.upvotes})
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
+
   );
 };
 

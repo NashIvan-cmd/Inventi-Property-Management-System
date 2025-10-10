@@ -1,6 +1,7 @@
 //TENANTS ONLY
 
 import TenantSidebar from "../Components/tenant_sidebar";
+import TenantNavbar from "../Components/tenant_navbar";
 
 function TenantDashboard() {
     return (
@@ -11,15 +12,7 @@ function TenantDashboard() {
         {/* Main Content */}
         <div className="flex-grow-1">
           {/* Navbar */}
-          <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-            <a className="navbar-brand fw-bold" href="#">
-              HOME
-            </a>
-            <div className="ms-auto d-flex align-items-center">
-              <button className="btn btn-light btn-sm me-2">🔔 Notifications</button>
-              <button className="btn btn-outline-light btn-sm">Logout</button>
-            </div>
-          </nav>
+          <TenantNavbar page = "HOME"/>
   
           {/* Content */}
           <div className="container mt-4">

@@ -2,6 +2,7 @@
 import React from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import TenantSidebar from "../Components/tenant_sidebar";
+import TenantNavbar from "../Components/tenant_navbar";
 
 const TenantProfilePage: React.FC = () => {
   return (
@@ -11,15 +12,7 @@ const TenantProfilePage: React.FC = () => {
         <TenantSidebar/>
       <div className="flex-grow-1">
         {/* Navbar */}
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-          <a className="navbar-brand fw-bold" href="#">
-            USER PROFILE
-          </a>
-          <div className="ms-auto d-flex align-items-center">
-            <button className="btn btn-light btn-sm me-2">🔔 Notifications</button>
-            <button className="btn btn-outline-light btn-sm">Logout</button>
-          </div>
-        </nav>
+        <TenantNavbar page = "USER PROFILE"/>
         <div className="container mt-4">
 
           <Card className="mb-4">

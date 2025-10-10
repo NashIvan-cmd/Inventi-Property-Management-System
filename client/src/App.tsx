@@ -24,12 +24,12 @@ function App() {
       //<RegisterDepartmentHead/>
       //<PropertyDetails/>
       //<TenantDashboard/>
-      <SubmitTicket/>
+      //<SubmitTicket/>
       //<TenantBillings/>
       //<MarketplacePage/>
       //<AmenitiesPage/>
       //<TenantProfilePage/>
-      //<TenantTicketsPage/>
+      <TenantTicketsPage/>
       
   );
 }

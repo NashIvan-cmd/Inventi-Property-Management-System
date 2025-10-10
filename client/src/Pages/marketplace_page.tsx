@@ -3,6 +3,7 @@
 import React from "react";
 import { Card, Button, Row, Col } from "react-bootstrap";
 import TenantSidebar from "../Components/tenant_sidebar";
+import TenantNavbar from "../Components/tenant_navbar";
 
 const MarketplacePage: React.FC = () => {
   const items = [
@@ -16,15 +17,7 @@ const MarketplacePage: React.FC = () => {
     <TenantSidebar/>
     <div className = "flex-grow-1">
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-        <a className="navbar-brand fw-bold" href="#">
-        Community Marketplace
-        </a>
-        <div className="ms-auto d-flex align-items-center">
-          <button className="btn btn-light btn-sm me-2">🔔 Notifications</button>
-          <button className="btn btn-outline-light btn-sm">Logout</button>
-        </div>
-      </nav>
+      <TenantNavbar page = "MARKETPLACE"/>
       <div className="container mt-4">
 
 
