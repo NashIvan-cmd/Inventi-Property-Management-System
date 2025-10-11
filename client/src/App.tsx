@@ -12,6 +12,7 @@ import MarketplacePage from './Pages/marketplace_page.tsx'
 import AmenitiesPage from './Pages/amenities_page.tsx'
 import TenantProfilePage from './Pages/tenant_profile.tsx'
 import TenantTicketsPage from './Pages/tenant-tickets-page.tsx'
+import ElectricalDashboard from "./Pages/electrical-dashboard.tsx";
 
 function App() {
 
@@ -29,7 +30,8 @@ function App() {
       //<MarketplacePage/>
       //<AmenitiesPage/>
       //<TenantProfilePage/>
-      <TenantTicketsPage/>
+      //<TenantTicketsPage/>
+      <ElectricalDashboard/>
       
   );
 }
