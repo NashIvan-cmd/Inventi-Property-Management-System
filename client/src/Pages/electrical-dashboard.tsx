@@ -6,7 +6,10 @@ interface Ticket {
   description: string;
   tag: string;
   visibility: "public" | "private";
-  upvotes: number;
+
+  upvotes?: number; // only for public tickets
+  unit?: string; // only for private tickets
+
   status: "open" | "resolved" | "closed";
 }
 
@@ -19,7 +22,7 @@ const ElectricalDashboard: React.FC = () => {
       description: "The outlet near the kitchen isn't working.",
       tag: "Electrical",
       visibility: "private", // must match lowercase type
-      upvotes: 3,
+      unit: "10B",
       status: "open",
     },
     {
@@ -81,9 +84,22 @@ const ElectricalDashboard: React.FC = () => {
               <p className="mb-1">{ticket.description}</p>
 
               <div className="d-flex justify-content-between align-items-center mt-3">
-                <small className="text-muted">
-                  Visibility: {ticket.visibility}
+                {ticket.visibility === "public"? (
+                <div>
+                  <small className="text-muted">
+                    Visibility: {ticket.visibility}
                 </small>
+                  <br/>
+                  <small className="text-muted">
+                    Upvotes: {ticket.upvotes}
+                  </small>
+                </div>
+                ):(
+                  <small className="text-muted">
+                    Visibility: {ticket.visibility}
+                </small>
+                )}
+
 
                 <div className="btn-group">
                   {ticket.status !== "resolved" && (
