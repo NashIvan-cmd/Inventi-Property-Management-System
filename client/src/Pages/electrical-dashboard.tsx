@@ -1,132 +1,73 @@
-import React, { useState } from "react";
-
-interface Ticket {
-  id: number;
-  title: string;
-  description: string;
-  tag: string;
-  visibility: "public" | "private";
-
-  upvotes?: number; // only for public tickets
-  unit?: string; // only for private tickets
-
-  status: "open" | "resolved" | "closed";
-}
+import React from "react";
+import ElectricalSidebar from "../Components/electrical_sidebar";
+import ElectricalNavbar from "../Components/electrical_navbar";
+import { ContinuousCalendar } from "../Components/ContinuousCalendar";
 
 const ElectricalDashboard: React.FC = () => {
-  // Sample ticket data
-  const [tickets, setTickets] = useState<Ticket[]>([
-    {
-      id: 1,
-      title: "Power outlet not working.",
-      description: "The outlet near the kitchen isn't working.",
-      tag: "Electrical",
-      visibility: "private", // must match lowercase type
-      unit: "10B",
-      status: "open",
-    },
-    {
-      id: 2,
-      title: "Hallway lights are out",
-      description: "The hallway light bulb isn't turning on.",
-      tag: "Electrical",
-      visibility: "public",
-      upvotes: 22,
-      status: "open",
-    },
-  ]);
-
-  const handleStatusChange = (
-    id: number,
-    newStatus: "open" | "resolved" | "closed"
-  ) => {
-    setTickets((prevTickets) =>
-      prevTickets.map((ticket) =>
-        // if id matches, return ticket with new status, else return ticket
-        ticket.id === id ? { ...ticket, status: newStatus } : ticket
-      )
-    );
-  };
-
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4 text-primary">Electrical Department Dashboard</h1>
-      <p className="text-muted mb-4">
-        View and manage all department-related tickets.
-      </p>
+    <div className="d-flex">
+      <ElectricalSidebar/>
+      <div className="flex-grow-1">
+        <ElectricalNavbar page="HOME"/>
+        <div className="container mt-5">
+        <h1 className="mb-1 text-primary">Electrical Department Dashboard</h1>
+        <p className="text-muted mb-5">
+          Access department tools, schedules, and reports quickly.
+        </p>
 
-      {tickets.length === 0 ? (
-        // if no tickets
-        <p className="text-muted">No tickets available.</p>
-      ) : (
-        // else render tickets
-        <div className="list-group">
-          {tickets.map((ticket) => (
-            <div
-              key={ticket.id}
-              className="list-group-item list-group-item-action mb-3 shadow-sm"
-            >
-              <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-1">{ticket.title}</h5>
-                <span
-                  className={`badge ${
-                    ticket.status === "open"
-                      ? "bg-warning text-dark"
-                      : ticket.status === "resolved"
-                      ? "bg-success"
-                      : "bg-secondary"
-                  }`}
-                >
-                  {ticket.status.toUpperCase()}
-                </span>
-              </div>
+        {/* Announcements / Notices */}
+        <div className="card shadow-sm mb-5">
+          <div className="card-body">
+            <h5 className="card-title">Announcements</h5>
+            <p className="card-text text-muted">
+              No new announcements.
+            </p>
+          </div>
+        </div>
 
-              <p className="mb-1">{ticket.description}</p>
-
-              <div className="d-flex justify-content-between align-items-center mt-3">
-                {ticket.visibility === "public"? (
-                <div>
-                  <small className="text-muted">
-                    Visibility: {ticket.visibility}
-                </small>
-                  <br/>
-                  <small className="text-muted">
-                    Upvotes: {ticket.upvotes}
-                  </small>
-                </div>
-                ):(
-                  <small className="text-muted">
-                    Visibility: {ticket.visibility}
-                </small>
-                )}
-
-
-                <div className="btn-group">
-                  {ticket.status !== "resolved" && (
-                    <button
-                      className="btn btn-sm btn-outline-success"
-                      onClick={() =>
-                        handleStatusChange(ticket.id, "resolved")
-                      }
-                    >
-                      Mark Resolved
-                    </button>
-                  )}
-                  {ticket.status !== "closed" && (
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleStatusChange(ticket.id, "closed")}
-                    >
-                      Close Ticket
-                    </button>
-                  )}
-                </div>
+        {/* Quick Action Buttons */}
+        <div className="mb-4">
+          <h4>Quick Actions</h4>
+          <div className="d-flex gap-2 flex-wrap">
+            <button className="btn btn-outline-primary">View Tickets</button>
+            <button className="btn btn-outline-secondary">Maintenance Schedule</button>
+            <button className="btn btn-outline-info">Job Completion Logs</button>
+            <button className="btn btn-outline-warning">Parts Inventory</button>
+          </div>
+        </div>
+    
+    
+        {/* Quick Overview Cards */}
+        <div className="row mb-4">
+          <div className="col-md-4 mb-3">
+            <div className="card text-white bg-primary h-100">
+              <div className="card-body">
+                <h5 className="card-title">Pending Tickets</h5>
+                <p className="card-text display-6">View & manage</p>
               </div>
             </div>
-          ))}
+          </div>
+          <div className="col-md-4 mb-3">
+            <div className="card text-white bg-success h-100">
+              <div className="card-body">
+                <h5 className="card-title">Preventive Maintenance</h5>
+                <p className="card-text display-6">Schedule & Logs</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4 mb-3">
+            <div className="card text-white bg-warning h-100">
+              <div className="card-body">
+                <h5 className="card-title">Spare Parts & Inventory</h5>
+                <p className="card-text display-6">Track Resources</p>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+    </div>      
+  </div>
+    
   );
 };
 
