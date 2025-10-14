@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from "react";
-import { useSnack } from "@/app/SnackProvider";
-import { ContinuousCalendar } from "@/components/ContinuousCalendar";
+import { useSnack } from "../Components/SnackProvider.tsx";
+import { ContinuousCalendar } from "../Components/ContinuousCalendar";
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 

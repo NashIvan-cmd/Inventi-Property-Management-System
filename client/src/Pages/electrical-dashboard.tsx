@@ -14,7 +14,7 @@ const ElectricalDashboard: React.FC = () => {
         <p className="text-muted mb-5">
           Access department tools, schedules, and reports quickly.
         </p>
-
+        <ContinuousCalendar/>
         {/* Announcements / Notices */}
         <div className="card shadow-sm mb-5">
           <div className="card-body">
