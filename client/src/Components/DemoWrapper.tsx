@@ -15,10 +15,11 @@ export default function DemoWrapper() {
   }
 
   return (
-    <div className="relative flex h-screen max-h-screen w-full flex-col gap-4 px-4 pt-4 items-center justify-center">
-      <div className="relative h-full overflow-auto mt-20">
+    <div className="flex h-screen w-full items-center">
+      <div className="relative h-full overflow-auto mt-5 scale-75 origin-top">
         <ContinuousCalendar onClick={onClickHandler} />
       </div>
     </div>
+
   );
 }

@@ -2,6 +2,8 @@ import React from "react";
 import ElectricalSidebar from "../Components/electrical_sidebar";
 import ElectricalNavbar from "../Components/electrical_navbar";
 import { ContinuousCalendar } from "../Components/ContinuousCalendar";
+import { SnackProvider } from "../Components/SnackProvider";
+import DemoWrapper from "../Components/DemoWrapper";
 
 const ElectricalDashboard: React.FC = () => {
   return (
@@ -11,10 +13,13 @@ const ElectricalDashboard: React.FC = () => {
         <ElectricalNavbar page="HOME"/>
         <div className="container mt-5">
         <h1 className="mb-1 text-primary">Electrical Department Dashboard</h1>
-        <p className="text-muted mb-5">
+        <p className="text-muted mb-0">
           Access department tools, schedules, and reports quickly.
         </p>
-        <ContinuousCalendar/>
+        
+        <SnackProvider>
+          <DemoWrapper/>
+        </SnackProvider>
         {/* Announcements / Notices */}
         <div className="card shadow-sm mb-5">
           <div className="card-body">

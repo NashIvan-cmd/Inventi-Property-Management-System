@@ -1,6 +1,8 @@
 'use client';
 
-import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, useContext, useCallback } from 'react';
+import type { ReactNode } from 'react';
+
 import { ErrorIcon, SuccessIcon } from '../assets/icons/SnackIcons.tsx';
 
 type Variant = 'success' | 'error';
