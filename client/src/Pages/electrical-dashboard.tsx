@@ -17,11 +17,8 @@ const ElectricalDashboard: React.FC = () => {
           Access department tools, schedules, and reports quickly.
         </p>
         
-        <SnackProvider>
-          <DemoWrapper/>
-        </SnackProvider>
         {/* Announcements / Notices */}
-        <div className="card shadow-sm mb-5">
+        <div className="card shadow-sm mb-1 mt-5">
           <div className="card-body">
             <h5 className="card-title">Announcements</h5>
             <p className="card-text text-muted">
@@ -29,6 +26,11 @@ const ElectricalDashboard: React.FC = () => {
             </p>
           </div>
         </div>
+
+        <SnackProvider>
+          <DemoWrapper/>
+        </SnackProvider>
+
 
         {/* Quick Action Buttons */}
         <div className="mb-4">

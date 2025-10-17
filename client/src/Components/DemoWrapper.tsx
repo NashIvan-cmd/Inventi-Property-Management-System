@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from "react";
 import { useSnack } from "../Components/SnackProvider.tsx";
 import { ContinuousCalendar } from "../Components/ContinuousCalendar";
 
@@ -15,7 +14,7 @@ export default function DemoWrapper() {
   }
 
   return (
-    <div className="flex h-screen w-full items-center">
+    <div className="flex h-screen w-full items-center justify-center">
       <div className="relative h-full overflow-auto mt-5 scale-75 origin-top">
         <ContinuousCalendar onClick={onClickHandler} />
       </div>
