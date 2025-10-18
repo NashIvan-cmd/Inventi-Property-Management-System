@@ -3,7 +3,7 @@
 function ElectricalSidebar(){
 
     return(
-        <div className="bg-light border-end vh-100" style={{ width: "220px" }}>
+        <div className="bg-light border-end vh-100 sticky-top" style={{ width: "220px" }}>
           <div className="p-3">
             <h5 className="fw-bold mb-4">Electrical Department Portal</h5>
             <ul className="nav flex-column">
