@@ -16,6 +16,10 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
   const [selectedMonth, setSelectedMonth] = useState<number>(0);
   const monthOptions = monthNames.map((month, index) => ({ name: month, value: `${index}` }));
 
+  const [showModal, setShowModal] = useState(false);
+  const handleAddTaskClick = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
   const scrollToDay = (monthIndex: number, dayIndex: number) => {
     const targetDayIndex = dayRefs.current.findIndex(
       (ref) => ref && ref.getAttribute('data-month') === `${monthIndex}` && ref.getAttribute('data-day') === `${dayIndex}`,
@@ -63,9 +67,11 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
   };
 
   const handleDayClick = (day: number, month: number, year: number) => {
-    if (!onClick) { return; }
+    if (!onClick) { return; } //return nothing if no onClick prop is provided
+
+    //call parent onClick prop function if provided
     if (month < 0) {
-      onClick(day, 11, year - 1);
+      onClick(day, 11, year - 1); //goes back to previous year if user clicks on a day before january
     } else {
       onClick(day, month, year);
     }
@@ -187,8 +193,8 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
             <button onClick={handleTodayClick} type="button" className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 lg:px-5 lg:py-2.5">
               Today
             </button>
-            <button type="button" className="whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-cyan-300 sm:rounded-xl lg:px-5 lg:py-2.5">
-              + Add Event
+            <button onClick={handleAddTaskClick} type="button" className="whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-cyan-300 sm:rounded-xl lg:px-5 lg:py-2.5">
+              + Add Task
             </button>
           </div>
           <div className="flex w-fit items-center justify-between">
@@ -222,6 +228,23 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
       <div className="w-full px-5 pt-4 sm:px-8 sm:pt-6">
         {generateCalendar}
       </div>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-40">
+          <div className="relative w-96 rounded-xl bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-semibold text-slate-800">
+              Add Task
+            </h2>
+            <form className="flex flex-col gap-3">
+              <input type="text" placeholder="Task" className="rounded-lg border border-gray-300 p-2"/>
+              <textarea placeholder="Description" className="rounded-lg border border-gray-300 p-2"></textarea>
+              <button type="submit" className="mt-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Save Task</button>
+            </form>
+            <button onClick={closeModal} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

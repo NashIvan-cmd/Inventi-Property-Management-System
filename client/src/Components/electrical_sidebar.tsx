@@ -29,6 +29,11 @@ function ElectricalSidebar(){
               </li>
               <li className="nav-item mb-2">
                 <a href="#" className="nav-link text-dark">
+                  📝Task Logs
+                </a>
+              </li>
+              <li className="nav-item mb-2">
+                <a href="#" className="nav-link text-dark">
                   👤 User Profile
                 </a>
               </li>
